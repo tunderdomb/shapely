@@ -12,6 +12,7 @@ function model( init ){
 
   function Model( args ){
     this._values = {}
+    this._errors = {}
     this.reset()
     init.apply(this, args)
   }
@@ -22,10 +23,10 @@ function model( init ){
     fields: fields,
     undefinedValue: undefined,
 
-
     // validation
 
     validate: function (){
+      this._errors = {}
       return fields.every(function ( name ){
         var field = this[name]
         var value = this[name]()
@@ -50,6 +51,11 @@ function model( init ){
         }
         return field.validate && !field.validate.call(this, value)
       }, this)
+    },
+    error: function( fieldName, errorValue ){
+      if ( errorValue == undefined ) return this._errors[fieldName]
+      else if( fieldName == undefined ) return this._errors
+      else this._errors[fieldName] = errorValue
     },
 
     // iterators
